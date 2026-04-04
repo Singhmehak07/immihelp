@@ -1,0 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Public+Sans:wght@300;400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Public Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-headline: "Manrope", sans-serif;
+
+  --color-primary: #006a71;
+  --color-primary-dim: #005d63;
+  --color-primary-container: #96f1fa;
+  --color-on-primary-container: #005b61;
+  
+  --color-secondary: #0060ad;
+  --color-secondary-container: #d4e3ff;
+  --color-on-secondary-container: #005396;
+
+  --color-tertiary: #3f637f;
+  --color-tertiary-container: #a9cdef;
+
+  --color-surface: #f8f9fa;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f1f4f5;
+  --color-surface-container: #ebeef0;
+  --color-surface-container-high: #e5e9eb;
+  --color-surface-container-highest: #dee3e6;
+
+  --color-on-surface: #2d3335;
+  --color-on-surface-variant: #5a6062;
+  
+  --color-error: #a83836;
+  --color-error-container: #fa746f;
+  --color-on-error-container: #6e0a12;
+}
+
+@layer base {
+  body {
+    @apply bg-surface text-on-surface font-sans;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-headline;
+  }
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--color-surface-container-highest);
+  border-radius: 10px;
+}
