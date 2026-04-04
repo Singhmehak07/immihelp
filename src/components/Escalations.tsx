@@ -74,13 +74,13 @@ export default function Escalations() {
             <p className="text-3xl font-extrabold text-on-surface font-headline">94% Resolved</p>
           </div>
           <div className="mt-4 flex -space-x-2">
-            {[1, 2, 3].map(i => (
-              <img 
+            {['SM', 'AK', 'PD'].map((initials, i) => (
+              <div 
                 key={i} 
-                src={`https://picsum.photos/seed/doc${i}/100/100`} 
-                className="h-8 w-8 rounded-full ring-2 ring-surface-container-lowest object-cover" 
-                alt="Doctor" 
-              />
+                className="h-8 w-8 rounded-full bg-surface-container-high flex items-center justify-center ring-2 ring-surface-container-lowest text-[10px] font-black text-on-surface shadow-sm"
+              >
+                {initials}
+              </div>
             ))}
             <div className="h-8 w-8 rounded-full bg-surface-container flex items-center justify-center ring-2 ring-surface-container-lowest text-[10px] font-black text-on-surface-variant">+4</div>
           </div>
@@ -89,7 +89,7 @@ export default function Escalations() {
         <div className="bg-error-container/10 p-6 rounded-xl border border-error-container/20">
           <p className="text-[10px] font-black text-error uppercase tracking-widest mb-1">High Urgency</p>
           <p className="text-4xl font-extrabold text-error font-headline">03</p>
-          <p className="text-[10px] font-bold text-on-error-container mt-2 uppercase tracking-wider">Requires immediate doctor intervention</p>
+          <p className="text-[10px] font-bold text-on-error-container mt-2 uppercase tracking-wider">Requires immediate specialist intervention</p>
         </div>
         
         <div className="bg-secondary-container/10 p-6 rounded-xl border border-secondary-container/20">
@@ -130,8 +130,8 @@ export default function Escalations() {
                   <td className="px-6 py-5">
                     <div className="flex items-center gap-3">
                       <div className={cn(
-                        "h-10 w-10 rounded-full flex items-center justify-center font-black text-xs",
-                        esc.urgent ? "bg-error-container/20 text-error" : "bg-secondary-container/30 text-secondary"
+                        "h-10 w-10 rounded-full flex items-center justify-center font-black text-xs shadow-sm",
+                        esc.urgent ? "bg-error-container/20 text-error" : "bg-surface-container-high text-on-surface"
                       )}>{esc.initials}</div>
                       <div>
                         <div className="flex items-center gap-2">
@@ -166,13 +166,13 @@ export default function Escalations() {
                         <>
                           <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-highest">
                             <div className={cn("w-1.5 h-1.5 rounded-full", esc.urgent ? "bg-error animate-pulse" : "bg-primary")}></div>
-                            <span className="text-[10px] font-black text-on-surface uppercase tracking-widest">{esc.doctor}</span>
+                            <span className="text-[10px] font-black text-on-surface uppercase tracking-widest">{esc.doctor.replace('Dr.', 'Spcl.')}</span>
                           </div>
                           <span className="text-[10px] text-on-surface-variant font-bold uppercase tracking-widest">{esc.status}</span>
                         </>
                       ) : (
                         <button className="px-4 py-1.5 bg-primary text-on-primary rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm hover:scale-95 transition-transform">
-                          Assign Dr.
+                          Assign Specialist
                         </button>
                       )}
                     </div>

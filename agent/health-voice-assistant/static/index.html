@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Voice Agent Dashboard</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: #0f172a;
+            color: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header {
+            width: 100%;
+            padding: 1.5rem 2rem;
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #334155;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .session-card {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            border: 1px solid #334155;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .session-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #334155;
+        }
+
+        .caller-id {
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .status-active { background: #166534; color: #bbf7d0; }
+        .status-escalated { background: #991b1b; color: #fecaca; }
+
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+
+        .chat-container::-webkit-scrollbar { width: 6px; }
+        .chat-container::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
+
+        .chat-message {
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            max-width: 85%;
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+
+        .chat-user {
+            background: #3b82f6;
+            color: white;
+            align-self: flex-start;
+            border-bottom-left-radius: 0;
+        }
+
+        .chat-assistant {
+            background: #334155;
+            color: #f8fafc;
+            align-self: flex-end;
+            border-bottom-right-radius: 0;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 4rem;
+            color: #94a3b8;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>Health Voice Agent Dashboard</h1>
+        <div id="connection-status" style="display: flex; align-items: center; gap: 8px;">
+            <div style="width: 10px; height: 10px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 10px #22c55e;"></div>
+            <span style="font-weight: 500; font-size: 0.9rem;">Live Updates</span>
+        </div>
+    </header>
+
+    <main class="container" id="sessions-container">
+        <div class="empty-state">
+            <h2>No active calls at the moment</h2>
+            <p style="margin-top: 0.5rem;">Waiting for an incoming call from Twilio... Dial your number now!</p>
+        </div>
+    </main>
+
+    <script>
+        async function fetchSessions() {
+            try {
+                const response = await fetch('/api/sessions');
+                if (!response.ok) throw new Error('Network response was not ok');
+                const sessions = await response.json();
+                renderSessions(sessions);
+            } catch (error) {
+                console.error("Error fetching sessions:", error);
+            }
+        }
+
+        function renderSessions(sessionsDict) {
+            const container = document.getElementById('sessions-container');
+            const sessionKeys = Object.keys(sessionsDict);
+
+            if (sessionKeys.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h2>No active calls at the moment</h2>
+                        <p style="margin-top: 0.5rem;">Waiting for an incoming call from Twilio... Dial your number now!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            for (const key of sessionKeys) {
+                const sess = sessionsDict[key];
+                const statusBadge = sess.escalated 
+                    ? '<span class="status-badge status-escalated">Escalated to Doctor</span>'
+                    : '<span class="status-badge status-active">Active Call</span>';
+
+                let chatHtml = sess.conversation_history.map(msg => {
+                    const typeClass = msg.role === 'user' ? 'chat-user' : 'chat-assistant';
+                    return `<div class="chat-message ${typeClass}"><strong>${msg.role === 'user' ? 'Caller' : 'Agent'}</strong>: <br/>${msg.content}</div>`;
+                }).join('');
+
+                if (sess.conversation_history.length === 0) {
+                    chatHtml = `<p style="color: #64748b; font-size: 0.9rem; text-align: center; padding: 1rem;">Call connected! Waiting for audio transcription from Deepgram...</p>`;
+                }
+
+                html += `
+                    <div class="session-card">
+                        <div class="session-header">
+                            <div class="caller-id">📞 ${sess.caller_id}</div>
+                            ${statusBadge}
+                        </div>
+                        <div class="chat-container">
+                            ${chatHtml}
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (container.dataset.lastKeys !== JSON.stringify(sessionsDict)) {
+                container.innerHTML = html;
+                container.dataset.lastKeys = JSON.stringify(sessionsDict);
+                
+                // Auto-scroll to bottom of chat
+                document.querySelectorAll('.chat-container').forEach(el => {
+                    el.scrollTop = el.scrollHeight;
+                });
+            }
+        }
+
+        setInterval(fetchSessions, 2000);
+        fetchSessions();
+    </script>
+</body>
+</html>

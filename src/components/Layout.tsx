@@ -2,10 +2,7 @@ import React from 'react';
 import { 
   LayoutDashboard, 
   FileText, 
-  Pill, 
   AlertTriangle, 
-  UserRound, 
-  BarChart3, 
   Settings,
   Search,
   Bell,
@@ -49,10 +46,7 @@ export default function Layout({ children, activeTab, setActiveTab }: LayoutProp
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'call-logs', label: 'Call Logs', icon: FileText },
-    { id: 'medicines', label: 'Medicines', icon: Pill },
     { id: 'escalations', label: 'Escalations', icon: AlertTriangle },
-    { id: 'doctors', label: 'Doctors', icon: UserRound },
-    { id: 'analytics', label: 'Analytics', icon: BarChart3 },
   ];
 
   return (

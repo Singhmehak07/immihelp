@@ -9,7 +9,8 @@ import {
   Clock, 
   MoreVertical,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Sparkles
 } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
 
@@ -26,8 +27,9 @@ const logs = [
     status: 'Resolved by AI',
     lang: 'Hindi',
     duration: '4m 12s',
-    statusColor: 'bg-emerald-50 text-emerald-700',
-    dotColor: 'bg-emerald-500'
+    statusColor: 'bg-emerald-600 text-white shadow-sm shadow-emerald-500/20',
+    dotColor: 'bg-white',
+    urgency: 1
   },
   {
     id: '#IM-2939',
@@ -41,8 +43,9 @@ const logs = [
     status: 'Escalated',
     lang: 'Marathi',
     duration: '7m 45s',
-    statusColor: 'bg-red-50 text-error',
-    dotColor: 'bg-error'
+    statusColor: 'bg-red-600 text-white shadow-sm shadow-red-500/20',
+    dotColor: 'bg-white',
+    urgency: 3
   },
   {
     id: '#IM-2938',
@@ -56,8 +59,9 @@ const logs = [
     status: 'Resolved by AI',
     lang: 'English',
     duration: '3m 22s',
-    statusColor: 'bg-emerald-50 text-emerald-700',
-    dotColor: 'bg-emerald-500'
+    statusColor: 'bg-emerald-600 text-white shadow-sm shadow-emerald-500/20',
+    dotColor: 'bg-white',
+    urgency: 2
   }
 ];
 
@@ -114,9 +118,9 @@ export default function CallLogs({ onSelectCall }: { onSelectCall: (id: string) 
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-surface-container-low/50">
-                <th className="px-6 py-4 text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Call ID</th>
+                <th className="px-6 py-4 text-[10px] font-bold text-on-surface-variant uppercase tracking-wider text-center">Urgency</th>
                 <th className="px-6 py-4 text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Patient</th>
-                <th className="px-6 py-4 text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Symptoms Summary</th>
+                <th className="px-6 py-4 text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">AI Call Summary</th>
                 <th className="px-6 py-4 text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Medicine / Category</th>
                 <th className="px-6 py-4 text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Status</th>
                 <th className="px-6 py-4 text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Info</th>
@@ -131,22 +135,51 @@ export default function CallLogs({ onSelectCall }: { onSelectCall: (id: string) 
                   onClick={() => onSelectCall(log.id)}
                 >
                   <td className="px-6 py-5 align-top">
-                    <span className="text-sm font-bold text-primary">{log.id}</span>
-                    <p className="text-[10px] text-on-surface-variant mt-0.5 font-bold">{log.time}</p>
+                    <div className="flex flex-col items-center justify-center gap-1 mt-1">
+                      <div className="flex gap-1">
+                        {[...Array(log.urgency)].map((_, i) => (
+                          <div 
+                            key={i} 
+                            className={cn(
+                              "w-2 h-2 rounded-full",
+                              log.urgency === 3 ? "bg-error animate-pulse" : 
+                              log.urgency === 2 ? "bg-amber-500" : "bg-emerald-500"
+                            )} 
+                          />
+                        ))}
+                      </div>
+                      <span className="text-[8px] font-black uppercase tracking-tighter opacity-50">
+                        {log.urgency === 3 ? 'Critical' : log.urgency === 2 ? 'Moderate' : 'Low'}
+                      </span>
+                    </div>
                   </td>
                   <td className="px-6 py-5 align-top">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-bold text-xs">
+                      <div className="w-9 h-9 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface font-bold text-xs shadow-sm">
                         {log.initials}
                       </div>
                       <div>
-                        <p className="text-sm font-semibold text-on-surface">{log.patient}</p>
-                        <p className="text-[10px] text-on-surface-variant font-medium">{log.phone}</p>
+                        <div className="flex items-center gap-2">
+                          <p className="text-sm font-bold text-on-surface">{log.patient}</p>
+                          <span className="text-[10px] font-bold text-primary opacity-60">{log.id}</span>
+                        </div>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <p className="text-[10px] text-on-surface-variant font-medium">{log.phone}</p>
+                          <span className="w-1 h-1 rounded-full bg-surface-container-highest"></span>
+                          <p className="text-[10px] text-on-surface-variant font-bold uppercase tracking-wider">{log.time}</p>
+                        </div>
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-5 align-top max-w-xs">
-                    <p className="text-sm text-on-surface-variant line-clamp-2 leading-relaxed">{log.symptoms}</p>
+                  <td className="px-6 py-5 align-top max-w-sm">
+                    <div className="flex gap-2.5">
+                      <div className="mt-1">
+                        <Sparkles className="w-3.5 h-3.5 text-primary fill-primary/10" />
+                      </div>
+                      <p className="text-sm text-on-surface-variant line-clamp-2 leading-relaxed font-medium italic">
+                        {log.symptoms}
+                      </p>
+                    </div>
                   </td>
                   <td className="px-6 py-5 align-top">
                     <div className="space-y-2">
@@ -155,8 +188,8 @@ export default function CallLogs({ onSelectCall }: { onSelectCall: (id: string) 
                         {log.medicine}
                       </div>
                       <span className={cn(
-                        "inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider",
-                        log.category === 'OTC' ? "bg-secondary-container text-on-secondary-container" : "bg-tertiary-container text-on-tertiary-container"
+                        "inline-flex px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm",
+                        log.category === 'OTC' ? "bg-emerald-500 text-white" : "bg-rose-500 text-white"
                       )}>
                         {log.category}
                       </span>

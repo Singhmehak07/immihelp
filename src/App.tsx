@@ -3,10 +3,7 @@ import Layout from './components/Layout';
 import Dashboard from './components/Dashboard';
 import CallLogs from './components/CallLogs';
 import CallDetails from './components/CallDetails';
-import Medicines from './components/Medicines';
 import Escalations from './components/Escalations';
-import Doctors from './components/Doctors';
-import Analytics from './components/Analytics';
 
 export default function App() {
   const [activeTab, setActiveTab] = React.useState('dashboard');
@@ -27,14 +24,8 @@ export default function App() {
         return <Dashboard />;
       case 'call-logs':
         return <CallLogs onSelectCall={handleSelectCall} />;
-      case 'medicines':
-        return <Medicines />;
       case 'escalations':
         return <Escalations />;
-      case 'doctors':
-        return <Doctors />;
-      case 'analytics':
-        return <Analytics />;
       default:
         return <Dashboard />;
     }

@@ -37,7 +37,7 @@ const volumeData = [
 
 const resolutionData = [
   { name: 'AI Resolved', value: 1078, color: '#006a71' },
-  { name: 'Doctor Escalated', value: 206, color: '#bcd6ff' },
+  { name: 'Specialist Escalation', value: 206, color: '#bcd6ff' },
 ];
 
 const StatCard = ({ icon: Icon, label, value, trend, colorClass, iconBgClass }: any) => (
@@ -185,9 +185,9 @@ export default function Dashboard() {
                   <Tooltip />
                 </PieChart>
               </ResponsiveContainer>
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
-                <span className="text-3xl font-black block text-on-surface">84%</span>
-                <span className="text-[10px] text-on-surface-variant font-bold uppercase tracking-wider">AI Accuracy</span>
+              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none mb-4">
+                <span className="text-4xl font-black text-on-surface leading-none">84%</span>
+                <span className="text-[10px] text-on-surface-variant font-bold uppercase tracking-wider mt-1">AI Accuracy</span>
               </div>
             </div>
 
